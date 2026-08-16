@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Conversations</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header class="topbar">
+        <h1>Instagram Conversations</h1>
+        <a href="/moderator/logout">Logout</a>
+    </header>
+    <main class="content">
+        <section class="panel">
+            <h2>LLM Control</h2>
+            <p>Global LLM is currently: <strong>{{ "paused" if global_llm_paused else "active" }}</strong></p>
+            <form method="post" action="/moderator/llm/pause-global?value={{ 'false' if global_llm_paused else 'true' }}">
+                <button type="submit">{{ "Resume" if global_llm_paused else "Pause" }} Global LLM</button>
+            </form>
+        </section>
+
+        <section class="panel">
+            <h2>Latest 100</h2>
+            <ul class="conversation-list">
+                {% for c in conversations %}
+                <li>
+                    <a href="/moderator/conversations/{{ c.id }}">Conversation #{{ c.id }}</a>
+                    <span>customer {{ c.customer_platform_id }}</span>
+                    <span>last {{ c.last_message_at }}</span>
+                    <span>llm {{ "paused" if c.llm_paused else "active" }}</span>
+                </li>
+                {% else %}
+                <li>No conversations yet.</li>
+                {% endfor %}
+            </ul>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Conversation {{ conversation.id }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header class="topbar">
+        <h1>Conversation #{{ conversation.id }}</h1>
+        <a href="/moderator/conversations">Back</a>
+    </header>
+    <main class="content">
+        <section class="panel">
+            <div class="meta-row">
+                <span>Customer: {{ conversation.customer_platform_id }}</span>
+                <span>Page: {{ conversation.page_platform_id }}</span>
+                <span>Status: {{ conversation.status.value }}</span>
+                <span>LLM: {{ "paused" if conversation.llm_paused else "active" }}</span>
+            </div>
+            <form method="post" action="/moderator/conversations/{{ conversation.id }}/llm-pause?value={{ 'false' if conversation.llm_paused else 'true' }}">
+                <button type="submit">{{ "Resume" if conversation.llm_paused else "Pause" }} LLM for this conversation</button>
+            </form>
+            <ol class="timeline">
+                {% for m in messages %}
+                <li class="msg {{ m.direction.value }}">
+                    <div class="msg-head">
+                        <strong>{{ m.author_type.value }}</strong>
+                        <small>{{ m.created_at }}</small>
+                    </div>
+                    <p>{{ m.text or "[non-text message]" }}</p>
+                </li>
+                {% else %}
+                <li>No messages yet.</li>
+                {% endfor %}
+            </ol>
+        </section>
+    </main>
+</body>
+</html>
